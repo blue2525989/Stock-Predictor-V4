@@ -20,8 +20,6 @@ def prepare_data():
     )
     selected_file = csv_files[selected_file_index]
     file_prefix = selected_file.replace('.csv', '')
-    print(selected_file)
-    print(file_prefix)
     selected_file_path = os.path.join(data_folder, selected_file)
 
     # Preprocess the selected CSV file

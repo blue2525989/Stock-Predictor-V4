@@ -32,9 +32,22 @@ def train_model():
         reward = ((1 - mape) + r2) / 2
         return reward
 
-    #TODO make unique name of data.csv, prefix with ticket name
+    # List all CSV files in the "data" folder
+    data_folder = os.path.join("data", "refined")
+    csv_files = [file for file in os.listdir(data_folder) if file.endswith(".csv")]
+
+    print("Available CSV files:")
+    for i, file in enumerate(csv_files):
+        print(f"{i + 1}. {file}")
+
+    # Ask for user input to select a CSV file
+    selected_file_index = (
+        int(input("Enter the number of the CSV file to process: ")) - 1
+    )
+    selected_file = csv_files[selected_file_index]
+    model_prefix = selected_file.replace('-data.csv', '')
     # Load data
-    data = pd.read_csv("data.csv")
+    data = pd.read_csv(os.path.join(data_folder, selected_file))
 
     # Normalize data
     scaler = MinMaxScaler()
@@ -234,11 +247,11 @@ def train_model():
         if test_reward >= best_reward1:
             print("Model saved!")
             #TODO make unique name of model.h5, prefix with ticket name
-            model.save("model.h5")
+            model.save(os.path.join('models', model_prefix + "-model.h5"))
 
     if i == epochs - 1:
         #TODO make unique name of model.h5, prefix with ticket name
-        model = load_model("model.h5")
+        model = load_model(os.path.join('models', model_prefix + "-model.h5"))
         y_pred_test = model.predict(X_test)
         test_reward = get_reward(y_test, y_pred_test)
         test_loss = model.evaluate(X_test, y_test)
@@ -262,8 +275,23 @@ def evaluate_model():
 
     print("TensorFlow version:", tf.__version__)
 
+        # List all CSV files in the "data" folder
+    data_folder = os.path.join("data", "refined")
+    csv_files = [file for file in os.listdir(data_folder) if file.endswith(".csv")]
+
+    print("Available CSV files:")
+    for i, file in enumerate(csv_files):
+        print(f"{i + 1}. {file}")
+
+    # Ask for user input to select a CSV file
+    selected_file_index = (
+        int(input("Enter the number of the CSV file to process: ")) - 1
+    )
+    selected_file = csv_files[selected_file_index]
+    model_prefix = selected_file.replace('-data.csv', '')
+
     # Load data
-    data = pd.read_csv("data.csv")
+    data = pd.read_csv(os.path.join(data_folder, selected_file))
 
     # Split data into train and test sets
     train_data = data.iloc[: int(0.8 * len(data))]
@@ -330,7 +358,7 @@ def evaluate_model():
         return np.array(X), np.array(y)
 
     # Load model
-    model = load_model("model.h5")
+    model = load_model(os.path.join('models', model_prefix + "-model.h5"))
 
     # Evaluate model
     rmse_scores = []
@@ -379,9 +407,25 @@ def fine_tune_model():
         r2 = r2_score(y_true, y_pred)
         reward = ((1 - mape) + r2) / 2
         return reward
+    
+
+    # List all CSV files in the "data" folder
+    data_folder = os.path.join("data", "refined")
+    csv_files = [file for file in os.listdir(data_folder) if file.endswith(".csv")]
+
+    print("Available CSV files:")
+    for i, file in enumerate(csv_files):
+        print(f"{i + 1}. {file}")
+
+    # Ask for user input to select a CSV file
+    selected_file_index = (
+        int(input("Enter the number of the CSV file to process: ")) - 1
+    )
+    selected_file = csv_files[selected_file_index]
+    model_prefix = selected_file.replace('-data.csv', '')
 
     # Load data
-    data = pd.read_csv("data.csv")
+    data = pd.read_csv(os.path.join(data_folder, selected_file))
 
     # Split data into train and test sets
     train_data = data.iloc[: int(0.8 * len(data))]
@@ -483,7 +527,7 @@ def fine_tune_model():
 
     while True:
         # Load model
-        model = load_model("model.h5")
+        model = load_model(os.path.join('models', model_prefix + "-model.h5"))
         print("\nEvaluating Model")
         # Evaluate model
         y_pred = model.predict(X_test)
@@ -503,13 +547,14 @@ def fine_tune_model():
         print("MAPE:", mape)
         print("MSE:", mse)
         print("R2:", r2)
+        print("Reward threshold", reward_threshold)
         count += 1
         print("Looped", count, "times.")
 
         # Check if reward threshold is reached
         if len(rewards) >= 1 and sum(rewards[-1:]) >= reward_threshold:
             print("Reward threshold reached!")
-            model.save("model.h5")
+            model.save(os.path.join('models', model_prefix + "-model.h5"))
 
             break
         else:
@@ -535,19 +580,21 @@ def fine_tune_model():
                 test_reward = get_reward(y_test, y_pred_test)
 
                 print("Test reward:", test_reward)
+                if i > 0:
+                    print("Best reward:", best_reward1)
 
                 if i == 0 and count == 1:
                     best_reward1 = test_reward
 
                 if test_reward >= best_reward1:
                     print("Model saved!")
-                    model_saved = 1
+                    # model_saved = 1
                     best_reward1 = test_reward
-                    model.save("model.h5")
+                    model.save(os.path.join('models', model_prefix + "-model.h5"))
                 
                 if test_reward >= reward_threshold:
                     print("Model reached reward threshold", test_reward, ". Saving and stopping epochs!")
-                    model_saved = 1
-                    model.save("model.h5")
+                    # model_saved = 1
+                    model.save(os.path.join('models', model_prefix + "-model.h5"))
                     break
 

@@ -123,12 +123,18 @@ def install_dependencies():
 
     print("Creating 'data' directory...")
     os.makedirs("data", exist_ok=True)
-    # os.makedirs(os.path.join("data", "unrefined"), exist_ok=True)
+    print("Creating 'data/unrefined' directory...")
+    os.makedirs(os.path.join("data", "unrefined"), exist_ok=True)
+    print("Creating 'data/refined' directory...")
     os.makedirs(os.path.join("data", "refined"), exist_ok=True)
+
+    
+    print("Creating 'models' directory...")
+    os.makedirs("models", exist_ok=True)
 
     # filename = os.path.join("data", "add csvs in this folder.txt")
     # with open(filename, "w") as file:
     #     file.write("This is the 'add csvs in this folder.txt' file.")
 
-    print("'data' directories created successfully!\n")
+    print("Directories created successfully!\n")
     print("SPV4 installation completed successfully!")
