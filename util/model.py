@@ -548,8 +548,8 @@ def fine_tune_model():
         print("MSE:", mse)
         print("R2:", r2)
         print("Reward threshold", reward_threshold)
-        count += 1
         print("Looped", count, "times.")
+        count += 1
 
         # Check if reward threshold is reached
         if len(rewards) >= 1 and sum(rewards[-1:]) >= reward_threshold:
@@ -560,7 +560,7 @@ def fine_tune_model():
         else:
             print("Training Model with 5 Epochs")
             epochs = 5
-            batch_size = 50
+            batch_size = 250
             for i in range(epochs):
                 print("Epoch", i, "/", epochs)
                 # Train the model for one epoch
@@ -579,22 +579,27 @@ def fine_tune_model():
                 sys.stdout.write('\033[F\033[K')
                 test_reward = get_reward(y_test, y_pred_test)
 
-                print("Test reward:", test_reward)
+                print("\nTest reward:", test_reward)
                 if i > 0:
-                    print("Best reward:", best_reward1)
+                    print("\nBest reward:", best_reward1)
 
+                print("\nTest reward:", test_reward)
                 if i == 0 and count == 1:
                     best_reward1 = test_reward
+                    print("\nBest reward:", best_reward1)
 
+                print("\nTest reward:", test_reward)
                 if test_reward >= best_reward1:
                     print("Model saved!")
                     # model_saved = 1
                     best_reward1 = test_reward
+                    print("\nBest reward:", best_reward1)
                     model.save(os.path.join('models', model_prefix + "-model.h5"))
                 
+                print("\nTest reward:", test_reward)
                 if test_reward >= reward_threshold:
                     print("Model reached reward threshold", test_reward, ". Saving and stopping epochs!")
                     # model_saved = 1
                     model.save(os.path.join('models', model_prefix + "-model.h5"))
                     break
-
+                print("\nTest reward:", test_reward)
